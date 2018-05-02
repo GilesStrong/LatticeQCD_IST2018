@@ -1,6 +1,7 @@
 #include "testreader.hh"
 
 bool debug = false;
+bool verbose = true;
 std::string defaultInput = "../Data/SU3_24_24_24_48_6.2000_1000_PHB_4_OR_7_dp.bin";
 std::string defaultOutput = "Output/test.txt";
 
@@ -22,6 +23,7 @@ std::map<std::string, std::string> getOptions(int argc, char* argv[]) {
     options.insert(std::make_pair("-i", defaultInput)); //Input file
     options.insert(std::make_pair("-o", defaultOutput)); //Output name
     options.insert(std::make_pair("-d", "1")); //Debug mode
+    options.insert(std::make_pair("-v", "1")); //Verbose mode
 
     if (argc >= 2) { //Check if help was requested
         std::string option(argv[1]);
@@ -61,10 +63,15 @@ int main(int argc, char *argv[]) {
     }
     if (options["-d"] == "1") {
         debug = true;
+        verbose = true;
+        std::cout << "Running in debug mode\n";
+    }
+    else if (options["-v"] == "1") {
+        verbose = true;
         std::cout << "Running with verbose output\n";
     }
 
-    if (debug) std::cout << "Reading configuration from: " << options["-i"] << "\n";
+    if (verbose) std::cout << "Reading configuration from: " << options["-i"] << "\n";
     std::ifstream filein(options["-i"].c_str(), std::ios::in | std::ios::binary);
     std::vector<int> param_Grid(4,24);
     param_Grid[3] = 48; //Time dimension
@@ -78,17 +85,17 @@ int main(int argc, char *argv[]) {
 
                     //Directional SU(3) iteration
                     for (int m = 0; m < 4; m++) { //Loop through SU(3) matrices
-                        std::cout << "\nSU(3) matrix at lattice point (" << i << ", " << j << ", " << k << ", " << t << ") in " << getDim(m) << " direction:\n";
+                        if (verbose) std::cout << "\nSU(3) matrix at lattice point (" << i << ", " << j << ", " << k << ", " << t << ") in " << getDim(m) << " direction:\n";
 
                         //Elements of SU(3) matrix
                         for (int a = 0; a < 3; a++) { //Loop through columns of SU(3) matrix
                             for (int b = 0; b < 3; b++) { //Loop through rows of SU(3) matrix
                                 filein.read((char*)&real, 8);
                                 filein.read((char*)&imaginary, 8);
-                                std::cout << "(" << a << ", " << b << "): " << real << " + " << imaginary << "*i\n";
+                                if (verbose)std::cout << "(" << a << ", " << b << "): " << real << " + " << imaginary << "*i\n";
                             } 
                         } //Elements
-                        return 2; //Only print one SU(3) matrix
+                        if (debug) return 2; //Only print one SU(3) matrix
 
                     } //SU(3) matrices
 
