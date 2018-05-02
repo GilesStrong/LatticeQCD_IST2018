@@ -1,7 +1,7 @@
 #include "testreader.hh"
 
 bool debug = false;
-bool verbose = true;
+bool verbose = false;
 std::string defaultInput = "../Data/SU3_24_24_24_48_6.2000_1000_PHB_4_OR_7_dp.bin";
 std::string defaultOutput = "Output/test.txt";
 
@@ -14,7 +14,8 @@ void showHelp() {
     /*Show help for input arguments*/
     std::cout << "-i : Input file name, default " << defaultInput << "\n";
     std::cout << "-o : Output file name, default " << defaultOutput << "\n";
-    std::cout << "-d : Run in debug mode [0/1], default 0\n";
+    std::cout << "-d : Run in debug mode [0/1], default 1\n";
+    std::cout << "-v : Run in verbose mode [0/1], default 1\n";
 }
 
 std::map<std::string, std::string> getOptions(int argc, char* argv[]) {
