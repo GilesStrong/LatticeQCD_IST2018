@@ -1,6 +1,8 @@
 #include "testreader.hh"
 
 bool debug = false;
+std::string defaultInput = "../Data/SU3_24_24_24_48_6.2000_1000_PHB_4_OR_7_dp.bin";
+std::string defaultOutput = "Output/test.txt";
 
 /*template <class Real,  int Ncolors>
     class _su3 {
@@ -9,17 +11,17 @@ bool debug = false;
 
 void showHelp() {
     /*Show help for input arguments*/
-    std::cout << "-i : Input file name, default ./Data/SU3_24_24_24_48_6.2000_1000_PHB_4_OR_7_dp.bin\n";
-    std::cout << "-o : Output file name, default Output/test.txt\n";
+    std::cout << "-i : Input file name, default " << defaultInput << "\n";
+    std::cout << "-o : Output file name, default " << defaultOutput << "\n";
     std::cout << "-d : Run in debug mode [0/1], default 0\n";
 }
 
 std::map<std::string, std::string> getOptions(int argc, char* argv[]) {
     /*Interpret input arguments*/
     std::map<std::string, std::string> options;
-    options.insert(std::make_pair("-i", "./Data/SU3_24_24_24_48_6.2000_1000_PHB_4_OR_7_dp.bin")); //Input file
-    options.insert(std::make_pair("-o", "Output/test.txt")); //Output name
-    options.insert(std::make_pair("-d", "0")); //Debug mode
+    options.insert(std::make_pair("-i", defaultInput)); //Input file
+    options.insert(std::make_pair("-o", defaultOutput)); //Output name
+    options.insert(std::make_pair("-d", "1")); //Debug mode
 
     if (argc >= 2) { //Check if help was requested
         std::string option(argv[1]);
@@ -57,9 +59,13 @@ int main(int argc, char *argv[]) {
     if (options.size() == 0) {
         return 1;
     }
+    if (options["-d"] == "1") {
+        debug = true;
+        std::cout << "Running with verbose output\n";
+    }
 
-    std::string configName(options["-o"]);
-    std::ifstream filein(configName.c_str(), std::ios::in | std::ios::binary);
+    if (debug) std::cout << "Reading configuration from: " << options["-i"] << "\n";
+    std::ifstream filein(options["-i"].c_str(), std::ios::in | std::ios::binary);
     std::vector<int> param_Grid(4,24);
     param_Grid[3] = 48; //Time dimension
     double real, imaginary;
@@ -67,7 +73,7 @@ int main(int argc, char *argv[]) {
     //Lattice iteration
     for (int t = 0; t < param_Grid[3]; t++) { //Loop over t
         for (int k = 0; k < param_Grid[2]; k++) { //Loop over z
-            for (int j = 0; j < param_Grid[1];j ++) { //Loop over y
+            for (int j = 0; j < param_Grid[1];j++) { //Loop over y
                 for (int i = 0; i < param_Grid[0]; i++) { //Loop over x
 
                     //Directional SU(3) iteration
