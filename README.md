@@ -11,6 +11,6 @@ Repo for lattice QCD project for IST QCD course, 2018
 - [XTensor-blas](https://github.com/QuantStack/xtensor-blas)
 
 ## Status
-~~Reads in first SU(3) matrix~~
-~~Checks that SU(3) matrices really are unitary~~
-Reads in entire configuration
+- ~~Reads in first SU(3) matrix~~
+- ~~Checks that SU(3) matrices really are unitary~~
+- Reads in entire configuration
