@@ -1,4 +1,4 @@
-# LatticeQCD_IST2018
+# LatticeQCD IST2018
 Repo for lattice QCD project for IST QCD course, 2018
 
 ## Requirements:
@@ -9,3 +9,6 @@ Repo for lattice QCD project for IST QCD course, 2018
 - [XTL](https://github.com/QuantStack/xtl)
 - [xtensor](https://github.com/QuantStack/xtensor)
 - [xtensor-blas](https://github.com/QuantStack/xtensor-blas)
+
+## Status
+Reads in configuration and checks that SU(3) matrices really are unitary
