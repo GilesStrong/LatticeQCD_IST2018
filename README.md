@@ -7,8 +7,10 @@ Repo for lattice QCD project for IST QCD course, 2018
 - [OpenBLAS](https://github.com/xianyi/OpenBLAS)
 - [LAPACK](https://github.com/Reference-LAPACK/lapack-release)
 - [XTL](https://github.com/QuantStack/xtl)
-- [xtensor](https://github.com/QuantStack/xtensor)
-- [xtensor-blas](https://github.com/QuantStack/xtensor-blas)
+- [XTensor](https://github.com/QuantStack/xtensor)
+- [XTensor-blas](https://github.com/QuantStack/xtensor-blas)
 
 ## Status
-Reads in configuration and checks that SU(3) matrices really are unitary
+~~Reads in first SU(3) matrix~~
+~~Checks that SU(3) matrices really are unitary~~
+Reads in entire configuration

@@ -1,7 +1,7 @@
 PREFIX=/usr/local
 C++ = g++
 C_FLAGS = -g -std=c++14 -O2
-INCLUDES = -I$(PREFIX)/include -I./ -I/home/giles/anaconda3/include
+INCLUDES = -I$(PREFIX)/include -I./
 LIBRARIES = -llapack -lblas
 FLAGS =  $(INCLUDES) $(LIBRARIES) $(C_FLAGS)
 

@@ -81,26 +81,26 @@ int main(int argc, char *argv[]) {
     constexpr std::array<size_t, 4> param_Grid = {24, 24, 24, 48};
     typedef xt::xtensor_fixed<std::complex<double>, xt::xshape<3, 3>> su3Matrix;
     typedef xt::xtensor_fixed<su3Matrix, xt::xshape<4>> direction;
-    typedef xt::xtensor_fixed<direction, xt::xshape<param_Grid[0], param_Grid[1], param_Grid[2], param_Grid[3]>> lattice;
+    //typedef xt::xtensor_fixed<direction, xt::xshape<param_Grid[0], param_Grid[1], param_Grid[2], param_Grid[3]>> lattice; //Crashes
+    typedef xt::xtensor<direction, 4> lattice;
 
-    lattice config();
+    lattice config(param_Grid);
 
     //Lattice iteration
-    for (int t = 0; t < param_Grid[3]; t++) { //Loop over t
-        for (int z = 0; z < param_Grid[2]; z++) { //Loop over z
-            for (int y = 0; y < param_Grid[1];y++) { //Loop over y
-                for (int x = 0; x < param_Grid[0]; x++) { //Loop over x
+    for (size_t t = 0; t < param_Grid[3]; t++) { //Loop over t
+        for (size_t z = 0; z < param_Grid[2]; z++) { //Loop over z
+            for (size_t y = 0; y < param_Grid[1];y++) { //Loop over y
+                for (size_t x = 0; x < param_Grid[0]; x++) { //Loop over x
 
-                    direction tmp_direction();
+                    direction tmp_direction;
                     //Directional SU(3) iteration
-                    for (int d = 0; d < 4; d++) { //Loop through SU(3) matrices
+                    for (size_t d = 0; d < 4; d++) { //Loop through SU(3) matrices
                         if (verbose) std::cout << "\nSU(3) matrix at lattice point (" << x << ", " << y << ", " << z << ", " << t << ") in " << getDim(d) << " direction:\n";
 
-                        su3Matrix tmp_su3Matrix(std::complex<double>{0,0});
-                        //std::cout << tmp_su3Matrix(0) << "\n";
+                        su3Matrix tmp_su3Matrix;
                         //Elements of SU(3) matrix
-                        for (int a = 0; a < 3; a++) { //Loop through columns of SU(3) matrix
-                            for (int b = 0; b < 3; b++) { //Loop through rows of SU(3) matrix
+                        for (size_t a = 0; a < 3; a++) { //Loop through columns of SU(3) matrix
+                            for (size_t b = 0; b < 3; b++) { //Loop through rows of SU(3) matrix
                                 filein.read((char*)&real, 8);
                                 filein.read((char*)&imaginary, 8);
                                 if (verbose) std::cout << "(" << a << ", " << b << "): " << real << " + " << imaginary << "*i\n";
@@ -115,9 +115,12 @@ int main(int argc, char *argv[]) {
                             std::cout << "Relative distances are: " << doubleCompare(det.real(), 1.0).second << " and " << doubleCompare(det.imag()+1, 1.0).second << "\n";
                             return 2;
                         }
+
+                        tmp_direction(d) = tmp_su3Matrix;
                         if (debug) return 2; //Only print one SU(3) matrix
 
                     } //SU(3) matrices
+                    config(x,y,z,t) = tmp_direction;
                 }
             }
         }
