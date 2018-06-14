@@ -20,6 +20,7 @@
 #include "xtensor/xtensor.hpp"
 #include "xtensor/xio.hpp"
 #include "xtensor-blas/xlinalg.hpp"
+#include "xtensor/xindex_view.hpp"
 //Project
 #include "misc.hh"
 
@@ -29,14 +30,19 @@ class Lattice {
 private:
 	std::array<size_t, 4> _shape;
 	lattice _config;
-	bool _verbose;
-	bool _debug;
+	std::string _verbose;
+	std::string _debug;
 
 public:
-	Lattice(std::array<size_t, 4>, std::string, bool, bool);
+	Lattice(std::array<size_t, 4>, std::string, std::string, std::string);
 	~Lattice();
-	std::string getDim(int);
+	std::string getDim(size_t);
 	void readConfig(std::string);
+	std::complex<double> calcPlaquette(std::array<size_t, 4>, std::pair<size_t, size_t>);
+	std::complex<double> calcMeanPlaquette(std::array<size_t, 4>);
+	void movePoint(std::array<size_t, 4>*, size_t, int);
+
+	void test();
 };
 
 #endif /* LATTICE_HH_ */

@@ -15,3 +15,8 @@ Repo for lattice QCD project for IST QCD course, 2018
 - ~~Reads in entire configuration~~
 - ~~Checks that SU(3) matrices really are unitary~~
 - ~~Reads in first SU(3) matrix~~
+
+## To do
+- Calculate mean of plaquettes at given point
+- Calculate plaquettes
+- ~~Periodic boundary conditions on plaquette computation~~

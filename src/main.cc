@@ -1,7 +1,7 @@
 #include "main.hh"
 
-bool debug = false;
-bool verbose = false;
+std::string debug = "";
+std::string verbose = "";
 std::string defaultInput = "./Data/SU3_24_24_24_48_6.2000_1000_PHB_4_OR_7_dp.bin";
 std::string defaultOutput = "Output/test.txt";
 constexpr std::array<size_t, 4> param_Grid = {24, 24, 24, 48};
@@ -10,8 +10,8 @@ void showHelp() {
     /*Show help for input arguments*/
     std::cout << "-i : Input file name, default " << defaultInput << "\n";
     std::cout << "-o : Output file name, default " << defaultOutput << "\n";
-    std::cout << "-d : Run in debug mode [0/1], default 1\n";
-    std::cout << "-v : Run in verbose mode [0,1,2], default 1\n";
+    std::cout << "-d : Run in debug point, default none\n";
+    std::cout << "-v : Run in verbose point, default off\n";
 }
 
 std::map<std::string, std::string> getOptions(int argc, char* argv[]) {
@@ -19,8 +19,8 @@ std::map<std::string, std::string> getOptions(int argc, char* argv[]) {
     std::map<std::string, std::string> options;
     options.insert(std::make_pair("-i", defaultInput)); //Input file
     options.insert(std::make_pair("-o", defaultOutput)); //Output name
-    options.insert(std::make_pair("-d", "1")); //Debug mode
-    options.insert(std::make_pair("-v", "1")); //Verbose mode
+    options.insert(std::make_pair("-d", "")); //Debug mode
+    options.insert(std::make_pair("-v", "")); //Verbose mode
 
     if (argc >= 2) { //Check if help was requested
         std::string option(argv[1]);
@@ -49,18 +49,14 @@ int main(int argc, char *argv[]) {
     if (options.size() == 0) {
         return 1;
     }
-    if (options["-d"] == "1") {
-        debug = true;
-        verbose = true;
-        std::cout << "Running in debug mode\n";
-    }
-    else if (options["-v"] == "1") {
-        verbose = true;
-        std::cout << "Running with verbose output\n";
-    }
+    debug = options["-d"];
+    verbose = options["-v"];
 
-    if (verbose) std::cout << "Loading config: " << options["-i"] << "\n";
+    if (verbose != "") std::cout << "Loading config: " << options["-i"] << "\n";
 	Lattice* config = new Lattice(param_Grid, options["-i"], verbose, debug);
-    if (verbose) std::cout << "Config loaded\n";
+    if (verbose != "") std::cout << "Config loaded\n";
 
+    config->calcMeanPlaquette({0,0,0,0});
+    config->calcMeanPlaquette({3,3,3,3});
+    config->calcMeanPlaquette({23,23,23,47});
 }
