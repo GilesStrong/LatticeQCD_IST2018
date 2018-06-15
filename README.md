@@ -11,9 +11,9 @@ Repo for lattice QCD project for IST QCD course, 2018
 - [XTensor-BLAS](https://github.com/QuantStack/xtensor-blas)
 
 ## How to run:
-1 Ensure depandancies installed and pats set
-1 Build with `make` in top directory
-1 Run using `./bin/main.exe`, `-d [deubug point]` can be used to exit once program reaches specified point (requires debug point in code), `-v [verbose point]` can be used to get verbose output of specifed function (must be set in code beforehand).
+1. Ensure depandancies installed and pats set
+1. Build with `make` in top directory
+1. Run using `./bin/main.exe`, `-d [deubug point]` can be used to exit once program reaches specified point (requires debug point in code), `-v [verbose point]` can be used to get verbose output of specifed function (must be set in code beforehand).
 
 ### Debug points
 - load - exits after loading first SU(3) matrix from lattice config
