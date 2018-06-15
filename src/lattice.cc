@@ -83,42 +83,55 @@ void Lattice::readConfig(std::string configName) {
 }
 
 void Lattice::test(){
-    /*Test function*/
+    /*Test function for random things*/
     std::array<size_t, 4> test = {0,2,4,5};
     //_config[test[0]][test[1]][test[2]][test[3]];
     std::cout << _config[test] << "\n";
 }
 
 size_t modulo(int a, int b) {
+    /*Modulo that also works with negaive numbers*/
     return (a%b+b)%b;
 }
 
-void Lattice::movePoint(std::array<size_t, 4>* point, size_t direction, int amount) {
+std::array<size_t, 4> Lattice::movePoint(std::array<size_t, 4> point, size_t direction, int amount) {
     /*Move position in grid whilst respecting peiodic boundaries*/
     if (_verbose == "movePoint") {
-        std::cout << "\nCurrect point: " << (*point)[direction] << " and moving " << amount << " steps\n";
-        std::cout << "Candidate point is: " << static_cast<int>((*point)[direction])+amount << "\n";
-        std::cout << "Periodic boundary conditions means new point is: " << modulo(static_cast<int>((*point)[direction])+amount, _shape[direction]) << "\n";
+        std::cout << "\nCurrect point: " << point[direction] << " and moving " << amount << " steps\n";
+        std::cout << "Candidate point is: " << static_cast<int>(point[direction])+amount << "\n";
+        std::cout << "Periodic boundary conditions means new point is: " << modulo(static_cast<int>(point[direction])+amount, _shape[direction]) << "\n";
     }
-    (*point)[direction] = modulo(static_cast<int>((*point)[direction])+amount, _shape[direction]);
+    point[direction] = modulo(static_cast<int>(point[direction])+amount, _shape[direction]);
+    return point;
 }
 
 std::complex<double> Lattice::calcPlaquette(std::array<size_t, 4> point, std::pair<size_t, size_t> plane) {
     /*Calculate value of plaquette at specified starting gridpoint and 2D plane*/
     if (_verbose == "calcPlaquette") std::cout << "\nCalculating plaquette at (" << point[0] << "," << point[1] << "," << point[2] << "," << point[3] << ") in plane (" << getDim(plane.first) << ":" << getDim(plane.second) << ")\n";
 
-    su3Matrix u = _config[point][plane.first];
+    //Link in mu direction at point
+    su3Matrix u = _config[point][plane.first]; 
     if (_verbose == "calcPlaquette") std::cout << "U matrix:\n" << u << "\n At point: (" << point[0] << "," << point[1] << "," << point[2] << "," << point[3] << ")\n";
-    movePoint(&point, plane.first, 1);
-    su3Matrix v = _config[point][plane.second];
-    if (_verbose == "calcPlaquette") std::cout << "V matrix:\n" << v << "\n At point: (" << point[0] << "," << point[1] << "," << point[2] << "," << point[3] << ")\n";;
-    movePoint(&point, plane.second, 1);
-    su3Matrix uprime = xt::conj(xt::transpose(_config[point][plane.first]));
-    if (_verbose == "calcPlaquette") std::cout << "U prime matrix:\n" << _config[point][plane.first] << "\ncomplex transpose:\n" << uprime << "\n At point: (" << point[0] << "," << point[1] << "," << point[2] << "," << point[3] << ")\n";
-    movePoint(&point, plane.first, -1);
+    
+    //Link in nu direction at point+mu
+    std::array<size_t, 4> tmp_point = movePoint(point, plane.first, 1);
+    su3Matrix v = _config[tmp_point][plane.second]; 
+    if (_verbose == "calcPlaquette") {
+        std::cout << "V matrix:\n" << v << "\n At point: (" << tmp_point[0] << "," << tmp_point[1] << "," << tmp_point[2] << "," << tmp_point[3] << ")\n";;
+    }
+    
+    //Reverse of link in mu direction at point+nu
+    tmp_point = movePoint(point, plane.second, 1);
+    su3Matrix uprime = xt::conj(xt::transpose(_config[tmp_point][plane.first])); 
+    if (_verbose == "calcPlaquette") {
+        std::cout << "U prime matrix:\n" << _config[tmp_point][plane.first] << "\ncomplex transpose:\n" << uprime << "\n At point: (" << tmp_point[0] << "," << tmp_point[1] << "," << tmp_point[2] << "," << tmp_point[3] << ")\n";
+    }
+    
+    //Reverse of link in nu direction at point
     su3Matrix vprime = xt::conj(xt::transpose(_config[point][plane.second]));
-    if (_verbose == "calcPlaquette") std::cout << "V prime matrix:\n" << _config[point][plane.second] << "\ncomplex transpose:\n" << vprime << "\n At point: (" << point[0] << "," << point[1] << "," << point[2] << "," << point[3] << ")\n";
+    if (_verbose == "calcPlaquette") std::cout << "V prime matrix:\n" << _config[tmp_point][plane.second] << "\ncomplex transpose:\n" << vprime << "\n At point: (" << point[0] << "," << point[1] << "," << point[2] << "," << point[3] << ")\n";
 
+    //Compute plaquette
     su3Matrix product = u*v*uprime*vprime;
     if (_verbose == "calcPlaquette") std::cout << "Plaquette product:\n" << product << "\n";
     std::complex<double> trace = xt::sum(xt::diagonal(product))[0];
@@ -132,6 +145,7 @@ std::complex<double> Lattice::calcMeanPlaquette(std::array<size_t, 4> point) {
     if (_verbose == "calcMeanPlaquette") std::cout << "\nCalculating plaquettes at (" << point[0] << "," << point[1] << "," << point[2] << "," << point[3] << ")\n";
     xt::xtensor_fixed<std::complex<double>, xt::xshape<6>> plaquttes;
 
+    //Compute all possible plaquttes at point
     size_t p = 0;
     for (size_t i = 0; i <= 2; i++) {
         for (size_t j = i+1; j <= 3; j++) {
@@ -141,11 +155,11 @@ std::complex<double> Lattice::calcMeanPlaquette(std::array<size_t, 4> point) {
         }
     }
 
+    //Compute means of plaquettes
     if (_verbose == "calcMeanPlaquette") {
         std::cout << "Mean spatial:spatial: " << xt::mean(xt::index_view(plaquttes, {{0},{1},{3}})) << "\n";
         std::cout << "Mean spatial:temporal: " << xt::mean(xt::index_view(plaquttes, {{2},{4},{5}})) << "\n";
     }
-
     std::complex<double> mean = xt::mean(plaquttes)[0];
     if (_verbose == "calcMeanPlaquette") std::cout << "Mean: " << mean << "\n";
     return mean;
