@@ -57,6 +57,6 @@ int main(int argc, char *argv[]) {
     if (verbose != "") std::cout << "Config loaded\n";
 
     config->calcMeanPlaquette({0,0,0,0});
-    config->calcMeanPlaquette({3,3,3,3});
-    config->calcMeanPlaquette({23,23,23,47});
+
+    config->getOverallPlaquetteMean();
 }

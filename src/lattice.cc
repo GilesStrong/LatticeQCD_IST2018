@@ -164,3 +164,28 @@ std::complex<double> Lattice::calcMeanPlaquette(std::array<size_t, 4> point) {
     if (_verbose == "calcMeanPlaquette") std::cout << "Mean: " << mean << "\n";
     return mean;
 }
+
+double Lattice::getOverallPlaquetteMean() {
+    /*Calculate means of plaquettes at all lattice points and return real part*/
+    double sum = 0;
+    double tmp_mean;
+    size_t p = 0;
+    
+    //Lattice iteration
+    for (size_t t = 0; t < _shape[3]; t++) { //Loop over t
+        for (size_t z = 0; z < _shape[2]; z++) { //Loop over z
+            for (size_t y = 0; y < _shape[1]; y++) { //Loop over y
+                for (size_t x = 0; x < _shape[0]; x++) { //Loop over x
+                    tmp_mean = calcMeanPlaquette({x,y,z,t}).real();
+                    sum +=  tmp_mean;
+                    if (_verbose == "getOverallPlaquetteMean") std::cout << "Mean at (" << x << "," << y << "," << z << "," << t << "): " << tmp_mean << "\n";
+                    p++;
+                }
+            }
+        }
+    }
+
+    double mean = sum/p;
+    if (_verbose == "getOverallPlaquetteMean") std::cout << "Overall mean: " << mean << "\n";
+    return mean;
+}
