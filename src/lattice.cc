@@ -122,20 +122,23 @@ std::complex<double> Lattice::calcPlaquette(std::array<size_t, 4> point, std::pa
     
     //Reverse of link in mu direction at point+nu
     tmp_point = movePoint(point, plane.second, 1);
-    su3Matrix uprime = xt::conj(xt::transpose(_config[tmp_point][plane.first])); 
+    su3Matrix uprime = xt::conj(xt::transpose(_config[tmp_point][plane.first]));
+
     if (_verbose == "calcPlaquette") {
         std::cout << "U prime matrix:\n" << _config[tmp_point][plane.first] << "\ncomplex transpose:\n" << uprime << "\n At point: (" << tmp_point[0] << "," << tmp_point[1] << "," << tmp_point[2] << "," << tmp_point[3] << ")\n";
     }
     
     //Reverse of link in nu direction at point
     su3Matrix vprime = xt::conj(xt::transpose(_config[point][plane.second]));
-    if (_verbose == "calcPlaquette") std::cout << "V prime matrix:\n" << _config[tmp_point][plane.second] << "\ncomplex transpose:\n" << vprime << "\n At point: (" << point[0] << "," << point[1] << "," << point[2] << "," << point[3] << ")\n";
-
+    if (_verbose == "calcPlaquette") std::cout << "V prime matrix:\n" << _config[point][plane.second] << "\ncomplex transpose:\n" << vprime << "\n At point: (" << point[0] << "," << point[1] << "," << point[2] << "," << point[3] << ")\n";
+    
     //Compute plaquette
-    su3Matrix product = u*v*uprime*vprime;
+    su3Matrix product = xt::linalg::dot(u, xt::linalg::dot(v, xt::linalg::dot(uprime, vprime)));
     if (_verbose == "calcPlaquette") std::cout << "Plaquette product:\n" << product << "\n";
     std::complex<double> trace = xt::sum(xt::diagonal(product))[0];
     if (_verbose == "calcPlaquette") std::cout << "Plaquette trace: " << trace << "\n\n";
+
+    if (_debug == "calcPlaquette") throw std::runtime_error("Debug mode: Only try one product");
 
     return trace;
 }
