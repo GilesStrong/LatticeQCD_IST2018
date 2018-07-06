@@ -26,15 +26,16 @@ Repo for lattice QCD project for IST QCD course, 2018
 - calcMeanPlaquette - prints values of possible plaquttes at given point, and their various means
 
 ## Status
-- Can compute means of spatial:spatial, spatial:temporal, and all plaquettes at given point
-- Code in place to compute plaquettes, but calculations are incorrect
+- Can compute mean of all plaquettes across lattice
+- ~~Can compute means of spatial:spatial, spatial:temporal, and all plaquettes at given point~~
+- ~~Code in place to compute plaquettes, but calculations are incorrect~~
 - ~~Converted reader to class~~
 - ~~Reads in entire configuration~~
 - ~~Checks that SU(3) matrices really are unitary~~
 - ~~Reads in first SU(3) matrix~~
 
 ## To do
-- Correct plaquette computation
+- ~~Correct plaquette computation~~
 - ~~Calculate mean of plaquettes at given point~~
 - ~~Calculate plaquettes~~
 - ~~Periodic boundary conditions on plaquette computation~~

@@ -140,7 +140,7 @@ std::complex<double> Lattice::calcPlaquette(std::array<size_t, 4> point, std::pa
 
     if (_debug == "calcPlaquette") throw std::runtime_error("Debug mode: Only try one product");
 
-    return trace;
+    return trace/3.;
 }
 
 std::complex<double> Lattice::calcMeanPlaquette(std::array<size_t, 4> point) {
