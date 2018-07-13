@@ -125,14 +125,15 @@ std::complex<double> Lattice::calcPlaquette(std::array<size_t, 4> point, std::pa
     su3Matrix uprime = xt::conj(xt::transpose(_config[tmp_point][plane.first]));
 
     if (_verbose == "calcPlaquette") {
-        std::cout << "U prime matrix:\n" << _config[tmp_point][plane.first] << "\ncomplex transpose:\n" << uprime << "\n At point: (" << tmp_point[0] << "," << tmp_point[1] << "," << tmp_point[2] << "," << tmp_point[3] << ")\n";
+        std::cout << "U prime matrix:\n" << _config[tmp_point][plane.first] << "\nconjugate transpose:\n" << uprime << "\n At point: (" << tmp_point[0] << "," << tmp_point[1] << "," << tmp_point[2] << "," << tmp_point[3] << ")\n";
     }
     
     //Reverse of link in nu direction at point
     su3Matrix vprime = xt::conj(xt::transpose(_config[point][plane.second]));
-    if (_verbose == "calcPlaquette") std::cout << "V prime matrix:\n" << _config[point][plane.second] << "\ncomplex transpose:\n" << vprime << "\n At point: (" << point[0] << "," << point[1] << "," << point[2] << "," << point[3] << ")\n";
+    if (_verbose == "calcPlaquette") std::cout << "V prime matrix:\n" << _config[point][plane.second] << "\nconjugate transpose:\n" << vprime << "\n At point: (" << point[0] << "," << point[1] << "," << point[2] << "," << point[3] << ")\n";
     
     //Compute plaquette
+
     su3Matrix product = xt::linalg::dot(u, xt::linalg::dot(v, xt::linalg::dot(uprime, vprime)));
     if (_verbose == "calcPlaquette") std::cout << "Plaquette product:\n" << product << "\n";
     std::complex<double> trace = xt::sum(xt::diagonal(product))[0];
@@ -192,3 +193,97 @@ double Lattice::getOverallPlaquetteMean() {
     if (_verbose == "getOverallPlaquetteMean") std::cout << "Overall mean: " << mean << "\n";
     return mean;
 }
+
+std::complex<double> Lattice::calcWilsonLoop(std::array<size_t, 4> point, size_t spatialDimension, size_t R, size_t T) {
+    /*Compute latice loop starting at given point with spatial width r and temporal width t in given spatial direction*/
+    if (_verbose == "calcWilsonLoop") std::cout << "\nCalculating Wilson loop at (" << point[0] << "," << point[1] << "," << point[2] << "," << point[3] << ") in " << getDim(spatialDimension) << " direction for (R,T) = (" << R << "," << T << ")\n";
+    
+    su3Matrix product({{1,0,0},{0,1,0},{0,0,1}});
+    su3Matrix tmp;
+
+    //Reverse link in temporal direction
+    for (size_t i = 0; i < T; i++) {
+        tmp = xt::conj(xt::transpose(_config[point][3]));
+        product = xt::linalg::dot(tmp, product);
+        if (_verbose == "calcWilsonLoop") std::cout << "Reverse temporal link " << i << " at point: (" << point[0] << "," << point[1] << "," << point[2] << "," << point[3] << ") is\n" << _config[point][3] << "\nconjugate transpose\n" << tmp << "\n";
+        point = movePoint(point, 3, 1);
+    }
+
+    //Reverse link in spatial direction
+    for (size_t i = 0; i < R; i++) {
+        tmp = xt::conj(xt::transpose(_config[point][spatialDimension]));
+        product = xt::linalg::dot(tmp, product);
+        if (_verbose == "calcWilsonLoop") std::cout << "Reverse spatial link " << i << " at point: (" << point[0] << "," << point[1] << "," << point[2] << "," << point[3] << ") is\n" << _config[point][spatialDimension] << "\nconjugate transpose\n" << tmp << "\n";
+        point = movePoint(point, spatialDimension, 1);  
+    }
+
+    //Link in temporal direction
+    for (size_t i = 0; i < T; i++) {
+        point = movePoint(point, 3, -1);
+        product = xt::linalg::dot(_config[point][3], product);
+        if (_verbose == "calcWilsonLoop") std::cout << "Temporal link " << i << " at point: (" << point[0] << "," << point[1] << "," << point[2] << "," << point[3] << ") is\n" << _config[point][3] << "\n";
+    }
+
+    //Link in spatial direction
+    for (size_t i = 0; i < R; i++) {
+        point = movePoint(point, spatialDimension, -1);
+        product = xt::linalg::dot(_config[point][spatialDimension], product);
+        if (_verbose == "calcWilsonLoop") std::cout << "Spatial link " << i << " at point: (" << point[0] << "," << point[1] << "," << point[2] << "," << point[3] << ") is\n" << _config[point][spatialDimension] << "\n";
+    }
+
+    //Compute trace
+    if (_verbose == "calcWilsonLoop") std::cout << "Wilson loop product:\n" << product << "\n";
+    std::complex<double> trace = xt::sum(xt::diagonal(product))[0];
+    if (_verbose == "calcWilsonLoop") std::cout << "Wilson loop trace: " << trace << "\n\n";
+
+    if (_debug == "calcWilsonLoop") throw std::runtime_error("Debug mode: Only try one product");
+
+    return trace/3.;
+}
+
+std::complex<double> Lattice::calcMeanWilsonLoopAtPoint(std::array<size_t, 4> point, size_t R, size_t T) {
+    /*Calulcate mean Wilson loop with spatial width r and temporal width t across all spatial dimensions at given point*/
+    if (_verbose == "calcMeanWilsonLoopAtPoint") std::cout << "\nCalculating mean Wilson loop at (" << point[0] << "," << point[1] << "," << point[2] << "," << point[3] << ") for (R,T) = (" << R << "," << T << ")\n";
+    
+    xt::xtensor_fixed<std::complex<double>, xt::xshape<3>> loops;
+
+    for (size_t i = 0; i < 3; i++) {
+        loops[i] = calcWilsonLoop(point, i, R, T);
+        if (_verbose == "calcMeanWilsonLoopAtPoint") std::cout << "\n Wilson loop at (" << point[0] << "," << point[1] << "," << point[2] << "," << point[3] << ") in " << getDim(i) << " direction for (R,T) = (" << R << "," << T << ") is " << loops[i] << "\n";
+    }
+
+    std::complex<double> mean = xt::mean(loops)[0];
+    if (_verbose == "calcMeanWilsonLoopAtPoint") std::cout << "Mean: " << mean << "\n";
+    if (_debug == "calcMeanWilsonLoopAtPoint") throw std::runtime_error("Debug mode: Only try one point");
+
+    return mean;
+}
+
+std::complex<double> Lattice::calcOverallMeanWilsonLoop(size_t R , size_t T) {
+    /*Calculate mean Wilson loops of spatial width r and temporal width t across entire lattice*/
+    if (_verbose == "calcOverallMeanWilsonLoop") std::cout << "\nCalculating mean Wilson loops of (R,T) = (" << R << "," << T << ")\n";
+
+    std::complex<double> sum = 0;
+    std::complex<double> tmp_mean;
+    double p = 0;
+    
+    //Lattice iteration
+    for (size_t t = 0; t < _shape[3]; t++) { //Loop over t
+        for (size_t z = 0; z < _shape[2]; z++) { //Loop over z
+            for (size_t y = 0; y < _shape[1]; y++) { //Loop over y
+                for (size_t x = 0; x < _shape[0]; x++) { //Loop over x
+                    tmp_mean = calcMeanWilsonLoopAtPoint({x,y,z,t}, R, T);
+                    sum +=  tmp_mean;
+                    if (_verbose == "calcOverallMeanWilsonLoop") std::cout << "Mean at (" << x << "," << y << "," << z << "," << t << "): " << tmp_mean << "\n";
+                    p++;
+                }
+            }
+        }
+    }
+
+    std::complex<double> mean = sum/p;
+    if (_verbose == "calcOverallMeanWilsonLoop") std::cout << "Overall mean: " << mean << "\n";
+    return mean;
+}
+
+

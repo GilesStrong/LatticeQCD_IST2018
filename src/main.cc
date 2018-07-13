@@ -56,7 +56,11 @@ int main(int argc, char *argv[]) {
 	Lattice* config = new Lattice(param_Grid, options["-i"], verbose, debug);
     if (verbose != "") std::cout << "Config loaded\n";
 
-    config->calcMeanPlaquette({0,0,0,0});
-
-    config->getOverallPlaquetteMean();
+    std::cout << "0, 0 " << config->calcOverallMeanWilsonLoop(0, 0) << "\n";
+    std::cout << "0, 1 " << config->calcOverallMeanWilsonLoop(0, 1) << "\n";
+    std::cout << "0, 2 " << config->calcOverallMeanWilsonLoop(0, 2) << "\n";
+    std::cout << "1, 0 " << config->calcOverallMeanWilsonLoop(1, 0) << "\n";
+    std::cout << "2, 0 " << config->calcOverallMeanWilsonLoop(2, 0) << "\n";
+    std::cout << "1, 1 " << config->calcOverallMeanWilsonLoop(1, 1) << "\n";
+    std::cout << "2, 2 " << config->calcOverallMeanWilsonLoop(2, 2) << "\n";
 }

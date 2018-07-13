@@ -42,6 +42,9 @@ public:
 	std::complex<double> calcMeanPlaquette(std::array<size_t, 4>);
 	std::array<size_t, 4> movePoint(std::array<size_t, 4>, size_t, int);
 	double getOverallPlaquetteMean();
+	std::complex<double> calcWilsonLoop(std::array<size_t, 4>, size_t, size_t, size_t);
+	std::complex<double> calcMeanWilsonLoopAtPoint(std::array<size_t, 4>, size_t, size_t);
+	std::complex<double> calcOverallMeanWilsonLoop(size_t, size_t);
 
 	void test();
 };
