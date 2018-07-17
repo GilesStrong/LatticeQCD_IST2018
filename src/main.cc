@@ -3,7 +3,7 @@
 std::string debug = "";
 std::string verbose = "";
 std::string defaultInput = "./Data/SU3_24_24_24_48_6.2000_1000_PHB_4_OR_7_dp.bin";
-std::string defaultOutput = "Output/test.txt";
+std::string defaultOutput = "Output/SU3_24_24_24_48_6.2000_1000_PHB_4_OR_7_dp.csv";
 constexpr std::array<size_t, 4> param_Grid = {24, 24, 24, 48};
 
 void showHelp() {
@@ -44,6 +44,25 @@ std::map<std::string, std::string> getOptions(int argc, char* argv[]) {
     return options;
 }
 
+void runWilsonExperiment(Lattice* config, std::string name) {
+    /*Loop over range of R and T values and compute means of corresponding Wilson loops*/
+    std::ofstream outFile;
+    outFile.open(name);
+    outFile << "R,T,Re,Im\n";
+
+    std::complex<double> mean;
+    for (size_t R = 0; R <= config->getShape()[0]/2; R++) {
+        for (size_t T = 0; T <= config->getShape()[3]/4; T++) {
+            if (verbose != "") std::cout << "(R, T) = " << R << ", " << T << ", mean = ";
+            mean = config->calcOverallMeanWilsonLoop(R, T);
+            outFile << R << "," << T << "," << mean.real() << "," << mean.imag() << "\n";
+            if (verbose != "") std::cout << mean.real() << "+" << mean.imag() << "i\n";
+        }
+    }
+
+    outFile.close();
+}
+
 int main(int argc, char *argv[]) {
     std::map<std::string, std::string> options = getOptions(argc, argv); //Get parsed arguments
     if (options.size() == 0) {
@@ -52,15 +71,10 @@ int main(int argc, char *argv[]) {
     debug = options["-d"];
     verbose = options["-v"];
 
-    if (verbose != "") std::cout << "Loading config: " << options["-i"] << "\n";
+     std::cout << "Loading config: " << options["-i"] << "\n";
 	Lattice* config = new Lattice(param_Grid, options["-i"], verbose, debug);
-    if (verbose != "") std::cout << "Config loaded\n";
+    std::cout << "Config loaded\n";
 
-    std::cout << "0, 0 " << config->calcOverallMeanWilsonLoop(0, 0) << "\n";
-    std::cout << "0, 1 " << config->calcOverallMeanWilsonLoop(0, 1) << "\n";
-    std::cout << "0, 2 " << config->calcOverallMeanWilsonLoop(0, 2) << "\n";
-    std::cout << "1, 0 " << config->calcOverallMeanWilsonLoop(1, 0) << "\n";
-    std::cout << "2, 0 " << config->calcOverallMeanWilsonLoop(2, 0) << "\n";
-    std::cout << "1, 1 " << config->calcOverallMeanWilsonLoop(1, 1) << "\n";
-    std::cout << "2, 2 " << config->calcOverallMeanWilsonLoop(2, 2) << "\n";
+    std::cout << "Running Wilson loop experiment and outputting results to: " << options["-o"] << "\n";
+    runWilsonExperiment(config, options["-o"]);
 }

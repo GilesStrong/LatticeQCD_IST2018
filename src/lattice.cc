@@ -287,3 +287,6 @@ std::complex<double> Lattice::calcOverallMeanWilsonLoop(size_t R , size_t T) {
 }
 
 
+std::array<size_t, 4> Lattice::getShape() {
+    return _shape;
+}

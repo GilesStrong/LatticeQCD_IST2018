@@ -26,7 +26,8 @@ Repo for lattice QCD project for IST QCD course, 2018
 - calcMeanPlaquette - prints values of possible plaquttes at given point, and their various means
 
 ## Status
-- Can compute mean of Wilson loops for arbitrary spatial and temporal widths across entire lattice
+- Can save values of V(R,T) for given configuration as CSV and analyse in python
+- ~~Can compute mean of Wilson loops for arbitrary spatial and temporal widths across entire lattice~~
 - ~~Can compute Wilson loops for arbitrary spatial and temporal widths~~
 - ~~Can compute mean of all plaquettes across lattice~~
 - ~~Can compute means of spatial:spatial, spatial:temporal, and all plaquettes at given point~~
@@ -37,5 +38,4 @@ Repo for lattice QCD project for IST QCD course, 2018
 - ~~Reads in first SU(3) matrix~~
 
 ## To do
-- Save means of Wilson loops across lattice as function of R and T
 - Analyse means and construct mass plots
