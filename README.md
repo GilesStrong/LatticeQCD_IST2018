@@ -2,6 +2,7 @@
 Repo for lattice QCD project for IST QCD course, 2018
 
 ## Requirements:
+### Experiment:
 - C++14
 - [JSON](https://github.com/nlohmann/json)
 - [OpenBLAS](https://github.com/xianyi/OpenBLAS)
@@ -10,6 +11,15 @@ Repo for lattice QCD project for IST QCD course, 2018
 - [XTensor](https://github.com/QuantStack/xtensor)
 - [XTensor-BLAS](https://github.com/QuantStack/xtensor-blas)
 
+### Analysis:
+- Python 3
+- Jupyter
+- Numpy
+- Pandas
+- Seaborn
+- Matplotlib
+- Scipy
+
 ## How to run:
 1. Ensure depandancies installed and pats set
 1. Build with `make` in top directory
@@ -17,6 +27,9 @@ Repo for lattice QCD project for IST QCD course, 2018
 
 ### Debug points
 - load - exits after loading first SU(3) matrix from lattice config
+- calcPlaquette - exits after calculating one plaquette
+- calcWilsonLoop - exits after calculating one Wilson loop
+- calcMeanWilsonLoopAtPoint - exits after calculating mean of Wilson loops at one point
 
 ### Verbosity points
 - [anything] - prints progress of main program
@@ -24,6 +37,10 @@ Repo for lattice QCD project for IST QCD course, 2018
 - movePoint - prints calculation details of moving withing the lattice, e.g. to check boundary conditions
 - calcPlaquette - prints values of link variables during plaquette computation and plaquette variable and trace
 - calcMeanPlaquette - prints values of possible plaquttes at given point, and their various means
+- getOverallPlaquetteMean
+- calcWilsonLoop
+- calcMeanWilsonLoopAtPoint
+- calcOverallMeanWilsonLoop
 
 ## Status
 - Can save values of V(R,T) for given configuration as CSV and analyse in python
