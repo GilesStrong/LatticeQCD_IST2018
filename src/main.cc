@@ -51,12 +51,31 @@ void runWilsonExperiment(Lattice* config, std::string name) {
     outFile << "R,T,Re,Im\n";
 
     std::complex<double> mean;
-    for (size_t R = 0; R <= config->getShape()[0]/2; R++) {
-        for (size_t T = 0; T <= config->getShape()[3]/4; T++) {
+    for (size_t R = 1; R <= config->getShape()[0]/2; R++) {
+        for (size_t T = 1; T <= config->getShape()[3]/4; T++) {
             if (verbose != "") std::cout << "(R, T) = " << R << ", " << T << ", mean = ";
             mean = config->calcOverallMeanWilsonLoop(R, T);
             outFile << R << "," << T << "," << mean.real() << "," << mean.imag() << "\n";
             if (verbose != "") std::cout << mean.real() << "+" << mean.imag() << "i\n";
+        }
+    }
+
+    outFile.close();
+}
+
+void runJackknifeWilsonExperiment(Lattice* config, std::string name) {
+    /*Loop over range of R and T values and compute jackknife means of corresponding Wilson loops*/
+    std::ofstream outFile;
+    outFile.open(name);
+    outFile << "R,T,Mean,Stdev\n";
+
+    std::pair<double, double> mean;
+    for (size_t R = 1; R <= config->getShape()[0]/2; R++) {
+        for (size_t T = 1; T <= config->getShape()[3]/4; T++) {
+            if (verbose != "") std::cout << "(R, T) = " << R << ", " << T << ", mean = ";
+            mean = config->getJackknifeWilsonMean(R, T);
+            outFile << R << "," << T << "," << mean.first << "," << mean.second << "\n";
+            if (verbose != "") std::cout << mean.first << "+-" << mean.second << "\n";
         }
     }
 
@@ -74,7 +93,6 @@ int main(int argc, char *argv[]) {
      std::cout << "Loading config: " << options["-i"] << "\n";
 	Lattice* config = new Lattice(param_Grid, options["-i"], verbose, debug);
     std::cout << "Config loaded\n";
-
-    std::cout << "Running Wilson loop experiment and outputting results to: " << options["-o"] << "\n";
-    runWilsonExperiment(config, options["-o"]);
+    std::cout << "Running Jackknife Wilson loop experiment and outputting results to: " << options["-o"] << "\n";
+    runJackknifeWilsonExperiment(config, options["-o"]);
 }

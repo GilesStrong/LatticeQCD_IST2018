@@ -45,6 +45,9 @@ public:
 	std::complex<double> calcWilsonLoop(std::array<size_t, 4>, size_t, size_t, size_t);
 	std::complex<double> calcMeanWilsonLoopAtPoint(std::array<size_t, 4>, size_t, size_t);
 	std::complex<double> calcOverallMeanWilsonLoop(size_t, size_t);
+	xt::xtensor<double, 1> getWilsonLoopSample(size_t, size_t);
+	xt::xtensor<double, 1> jackknifeWilson(size_t, size_t);
+	std::pair<double, double> getJackknifeWilsonMean(size_t, size_t);
 	std::array<size_t, 4> getShape();
 
 	void test();

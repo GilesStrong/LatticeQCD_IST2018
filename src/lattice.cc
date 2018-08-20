@@ -290,3 +290,57 @@ std::complex<double> Lattice::calcOverallMeanWilsonLoop(size_t R , size_t T) {
 std::array<size_t, 4> Lattice::getShape() {
     return _shape;
 }
+
+xt::xtensor<double, 1> Lattice::getWilsonLoopSample(size_t R, size_t T) {
+    /*Calculate all Wilson loops of spatial width r and temporal width t across entire lattice*/
+    if (_verbose == "getWilsonLoopSample") std::cout << "\nCalculating all Wilson loops of (R,T) = (" << R << "," << T << ")\n";
+
+    xt::xtensor<double, 1> traces = xt::xtensor<double, 1>(std::array<size_t, 1>{_shape[0]*_shape[1]*_shape[2]*_shape[3]*3});
+
+    //Lattice iteration
+    int p = 0;
+    for (size_t t = 0; t < _shape[3]; t++) { //Loop over t
+        for (size_t z = 0; z < _shape[2]; z++) { //Loop over z
+            for (size_t y = 0; y < _shape[1]; y++) { //Loop over y
+                for (size_t x = 0; x < _shape[0]; x++) { //Loop over x
+                    //Direction iteration
+                    for (size_t i = 0; i < 3; i++) {
+                        traces[p] = calcWilsonLoop({x,y,z,t}, i, R, T).real();
+                        if (_verbose == "getWilsonLoopSample") std::cout << "Loop at (" << x << "," << y << "," << z << "," << t << ") in direction " << getDim(i) << ": " << traces[p] << "\n";
+                        p++;
+                    }
+                }
+            }
+        }
+    }
+
+    if (_verbose == "getWilsonLoopSample") std::cout << "Overall mean: " << xt::mean(traces) << "\n";
+    return traces;
+}
+
+xt::xtensor<double, 1> Lattice::jackknifeWilson(size_t R, size_t T) {
+    /*Jackknife resample Wilson loops*/
+    if (_verbose == "jackknifeWilson") std::cout << "\nCalculating all Wilson loops of (R,T) = (" << R << "," << T << ")\n";
+    xt::xtensor<double, 1> traces = getWilsonLoopSample(R, T);
+
+    xt::xtensor<double, 1> jackknifeSample = xt::xtensor<double, 1>(std::array<size_t, 1>{traces.size()});
+    double sum = xt::sum(traces)[0];
+    for (size_t i = 0; i < jackknifeSample.size(); i++) {
+        jackknifeSample[i] = sum-traces[i];
+    }
+    jackknifeSample /= (static_cast<double>(traces.size())-1);
+
+    if (_verbose == "jackknifeWilson") std::cout << "Overall mean: " << xt::mean(traces) << " Jackknife mean: " << xt::mean(jackknifeSample)<< "\n";
+    return jackknifeSample;
+}
+
+std::pair<double, double> Lattice::getJackknifeWilsonMean(size_t R, size_t T) {
+    /*Compute mean and std of Jackknife resample of Wilson loops*/
+    xt::xtensor<double, 1> sample = jackknifeWilson(R, T);
+
+    double mean = xt::mean(sample)[0];
+    double std = sqrt(((static_cast<double>(sample.size()-1))/sample.size())*xt::sum(xt::pow(sample-mean, 2))[0]);
+    
+    if (_verbose == "getJackknifeWilsonMean") std::cout << "Mean: " << mean << " std: " << std << "\n";
+    return std::make_pair(mean, std);
+}

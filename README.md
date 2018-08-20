@@ -41,9 +41,13 @@ Repo for lattice QCD project for IST QCD course, 2018
 - calcWilsonLoop
 - calcMeanWilsonLoopAtPoint
 - calcOverallMeanWilsonLoop
+- getWilsonLoopSample
+- jackknifeWilson
+- getJackknifeWilsonMean
 
 ## Status
-- Can save values of V(R,T) for given configuration as CSV and analyse in python
+- Can compute jackknife variences of meanWilson loops
+- ~~Can save values of V(R,T) for given configuration as CSV and analyse in python~~
 - ~~Can compute mean of Wilson loops for arbitrary spatial and temporal widths across entire lattice~~
 - ~~Can compute Wilson loops for arbitrary spatial and temporal widths~~
 - ~~Can compute mean of all plaquettes across lattice~~
@@ -55,4 +59,3 @@ Repo for lattice QCD project for IST QCD course, 2018
 - ~~Reads in first SU(3) matrix~~
 
 ## To do
-- Analyse means and construct mass plots
