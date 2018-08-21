@@ -47,12 +47,13 @@ std::map<std::string, std::string> getOptions(int argc, char* argv[]) {
 void runWilsonExperiment(Lattice* config, std::string name) {
     /*Loop over range of R and T values and compute mean of corresponding Wilson loops*/
     std::ofstream outFile;
+    outFile.precision(50);
     outFile.open(name);
     outFile << "R,T,Mean,Std\n";
 
     std::pair<double, double> mean;
-    for (size_t R = 1; R <= config->getShape()[0]/2; R++) {
-        for (size_t T = 1; T <= config->getShape()[3]/4; T++) {
+    for (size_t R = 1; R <= 2;R++){//config->getShape()[0]/2; R++) {
+        for (size_t T = 1; T <= 2;T++){//config->getShape()[3]/4; T++) {
             if (verbose != "") std::cout << "(R, T) = " << R << ", " << T << ", mean = ";
             mean = config->calcOverallMeanWilsonLoop(R, T);
             outFile << R << "," << T << "," << mean.first << "," << mean.second << "\n";
@@ -66,6 +67,7 @@ void runWilsonExperiment(Lattice* config, std::string name) {
 void runWilsonExperimentMP(Lattice* config, std::string name) {
     /*Loop over range of R and T values and compute mean of corresponding Wilson loops*/
     std::ofstream outFile;
+    outFile.precision(50);
     outFile.open(name);
     outFile << "R,T,Mean\n";
 
@@ -76,7 +78,9 @@ void runWilsonExperimentMP(Lattice* config, std::string name) {
             mean = config->calcOverallMeanWilsonLoopMP(R, T);
             outFile << R << "," << T << "," << mean << "\n";
             if (verbose != "") std::cout << mean << "\n";
+            break;
         }
+        break;
     }
 
     outFile.close();
