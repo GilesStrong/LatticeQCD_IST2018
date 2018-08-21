@@ -78,9 +78,7 @@ void runWilsonExperimentMP(Lattice* config, std::string name) {
             mean = config->calcOverallMeanWilsonLoopMP(R, T);
             outFile << R << "," << T << "," << mean << "\n";
             if (verbose != "") std::cout << mean << "\n";
-            break;
         }
-        break;
     }
 
     outFile.close();
