@@ -42,11 +42,9 @@ Repo for lattice QCD project for IST QCD course, 2018
 - calcMeanWilsonLoopAtPoint
 - calcOverallMeanWilsonLoop
 - getWilsonLoopSample
-- jackknifeWilson
-- getJackknifeWilsonMean
 
 ## Status
-- Can compute jackknife variences of meanWilson loops
+- Multi-thread computation of Wilson loop means
 - ~~Can save values of V(R,T) for given configuration as CSV and analyse in python~~
 - ~~Can compute mean of Wilson loops for arbitrary spatial and temporal widths across entire lattice~~
 - ~~Can compute Wilson loops for arbitrary spatial and temporal widths~~

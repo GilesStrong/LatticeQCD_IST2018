@@ -259,33 +259,16 @@ std::complex<double> Lattice::calcMeanWilsonLoopAtPoint(std::array<size_t, 4> po
     return mean;
 }
 
-std::complex<double> Lattice::calcOverallMeanWilsonLoop(size_t R , size_t T) {
-    /*Calculate mean Wilson loops of spatial width r and temporal width t across entire lattice*/
-    if (_verbose == "calcOverallMeanWilsonLoop") std::cout << "\nCalculating mean Wilson loops of (R,T) = (" << R << "," << T << ")\n";
+std::pair<double, double> Lattice::calcOverallMeanWilsonLoop(size_t R, size_t T) {
+    /*Get mean of all Wilson loops*/
+    if (_verbose == "calcOverallMeanWilsonLoop") std::cout << "\nCalculating all Wilson loops of (R,T) = (" << R << "," << T << ")\n";
+    xt::xtensor<double, 1> traces = getWilsonLoopSample(R, T);
+    double mean = xt::mean(traces)[0];
+    double std = sqrt(xt::sum(xt::pow(traces-mean, 2))[0]/static_cast<double>(traces.size()));
 
-    std::complex<double> sum = 0;
-    std::complex<double> tmp_mean;
-    double p = 0;
-    
-    //Lattice iteration
-    for (size_t t = 0; t < _shape[3]; t++) { //Loop over t
-        for (size_t z = 0; z < _shape[2]; z++) { //Loop over z
-            for (size_t y = 0; y < _shape[1]; y++) { //Loop over y
-                for (size_t x = 0; x < _shape[0]; x++) { //Loop over x
-                    tmp_mean = calcMeanWilsonLoopAtPoint({x,y,z,t}, R, T);
-                    sum +=  tmp_mean;
-                    if (_verbose == "calcOverallMeanWilsonLoop") std::cout << "Mean at (" << x << "," << y << "," << z << "," << t << "): " << tmp_mean << "\n";
-                    p++;
-                }
-            }
-        }
-    }
-
-    std::complex<double> mean = sum/p;
-    if (_verbose == "calcOverallMeanWilsonLoop") std::cout << "Overall mean: " << mean << "\n";
-    return mean;
+    if (_verbose == "calcOverallMeanWilsonLoop") std::cout << "Mean: " << xt::mean(traces) << "+-" << std << "\n";
+    return std::make_pair(mean, std);
 }
-
 
 std::array<size_t, 4> Lattice::getShape() {
     return _shape;
@@ -318,29 +301,24 @@ xt::xtensor<double, 1> Lattice::getWilsonLoopSample(size_t R, size_t T) {
     return traces;
 }
 
-xt::xtensor<double, 1> Lattice::jackknifeWilson(size_t R, size_t T) {
-    /*Jackknife resample Wilson loops*/
-    if (_verbose == "jackknifeWilson") std::cout << "\nCalculating all Wilson loops of (R,T) = (" << R << "," << T << ")\n";
-    xt::xtensor<double, 1> traces = getWilsonLoopSample(R, T);
+double Lattice::calcOverallMeanWilsonLoopMP(size_t R, size_t T) {
+    /*Calculate mean of all Wilson loops of spatial width r and temporal width t across entire lattice with multi processing*/
+    double sum = 0;
+    int p = 0;
 
-    xt::xtensor<double, 1> jackknifeSample = xt::xtensor<double, 1>(std::array<size_t, 1>{traces.size()});
-    double sum = xt::sum(traces)[0];
-    for (size_t i = 0; i < jackknifeSample.size(); i++) {
-        jackknifeSample[i] = sum-traces[i];
+    #pragma omp parallel for reduction(+:sum,p)
+    for (size_t t = 0; t < _shape[3]; t++) { //Loop over t
+        for (size_t z = 0; z < _shape[2]; z++) { //Loop over z
+            for (size_t y = 0; y < _shape[1]; y++) { //Loop over y
+                for (size_t x = 0; x < _shape[0]; x++) { //Loop over x
+                    for (size_t i = 0; i < 3; i++) {//Direction iteration
+                        sum += calcWilsonLoop({x,y,z,t}, i, R, T).real();
+                        p++;
+                    }
+                }
+            }
+        }
     }
-    jackknifeSample /= (static_cast<double>(traces.size())-1);
 
-    if (_verbose == "jackknifeWilson") std::cout << "Overall mean: " << xt::mean(traces) << " Jackknife mean: " << xt::mean(jackknifeSample)<< "\n";
-    return jackknifeSample;
-}
-
-std::pair<double, double> Lattice::getJackknifeWilsonMean(size_t R, size_t T) {
-    /*Compute mean and std of Jackknife resample of Wilson loops*/
-    xt::xtensor<double, 1> sample = jackknifeWilson(R, T);
-
-    double mean = xt::mean(sample)[0];
-    double std = sqrt(((static_cast<double>(sample.size()-1))/sample.size())*xt::sum(xt::pow(sample-mean, 2))[0]);
-    
-    if (_verbose == "getJackknifeWilsonMean") std::cout << "Mean: " << mean << " std: " << std << "\n";
-    return std::make_pair(mean, std);
+    return sum/p;
 }

@@ -1,6 +1,6 @@
 PREFIX=/usr/local
 C++ = g++
-C_FLAGS = -g -std=c++14 -O2 -Wall -Wextra
+C_FLAGS = -g -std=c++14 -O2 -Wall -Wextra -fopenmp
 INCLUDES = -I$(PREFIX)/include -I./src
 LIBRARIES = -llapack -lblas
 FLAGS =  $(INCLUDES) $(LIBRARIES) $(C_FLAGS)
