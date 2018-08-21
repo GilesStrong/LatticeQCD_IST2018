@@ -8,8 +8,8 @@ Repo for lattice QCD project for IST QCD course, 2018
 - [OpenBLAS](https://github.com/xianyi/OpenBLAS)
 - [LAPACK](https://github.com/Reference-LAPACK/lapack-release)
 - [XTL](https://github.com/QuantStack/xtl)
-- [XTensor](https://github.com/QuantStack/xtensor)
-- [XTensor-BLAS](https://github.com/QuantStack/xtensor-blas)
+- [XTensor 0.16.3](https://github.com/QuantStack/xtensor/tree/0.16.3)
+- [XTensor-BLAS 0.11.1](https://github.com/QuantStack/xtensor-blas/tree/0.11.1)
 
 ### Analysis:
 - Python 3
