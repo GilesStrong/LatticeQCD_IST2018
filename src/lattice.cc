@@ -304,21 +304,19 @@ xt::xtensor<double, 1> Lattice::getWilsonLoopSample(size_t R, size_t T) {
 double Lattice::calcOverallMeanWilsonLoopMP(size_t R, size_t T) {
     /*Calculate mean of all Wilson loops of spatial width r and temporal width t across entire lattice with multi processing*/
     double sum = 0;
-    int p = 0;
 
-    #pragma omp parallel for reduction(+:sum,p)
+    #pragma omp parallel for reduction(+:sum)
     for (size_t t = 0; t < _shape[3]; t++) { //Loop over t
         for (size_t z = 0; z < _shape[2]; z++) { //Loop over z
             for (size_t y = 0; y < _shape[1]; y++) { //Loop over y
                 for (size_t x = 0; x < _shape[0]; x++) { //Loop over x
-                    for (size_t i = 0; i < 3; i++) {//Direction iteration
+                    for (size_t i = 0; i < 3; i++) { //Direction iteration
                         sum += calcWilsonLoop({x,y,z,t}, i, R, T).real();
-                        p++;
                     }
                 }
             }
         }
     }
 
-    return sum/p;
+    return sum/(_shape[0]*_shape[1]*_shape[2]*_shape[3]*3);
 }
