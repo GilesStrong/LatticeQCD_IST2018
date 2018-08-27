@@ -19,12 +19,12 @@ def make_job_file(uid, input_file, output_dir):
 
     job_name = "analysis_" + str(uid) + ".job"
     job_file = open(job_name, "w")
-    job_file.write(r"echo Beginning\ job\n")
+    job_file.write("echo Beginning\ job\n")
     job_file.write("module load gcc-5.4\n")
     job_file.write("export PATH=/lstore/cms/giles/programs/bin:$PATH\n")
     job_file.write("export LD_LIBRARY_PATH=/lstore/cms/giles/programs/lib64\n")
     job_file.write("cd " + SOFTDIR + "\n")
-    job_file.write(r"echo Paths\ set\n")
+    job_file.write("echo Paths\ set\n")
     job_file.write(cmd + "\n")
     job_file.close()
 
