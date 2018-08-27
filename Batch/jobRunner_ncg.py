@@ -47,7 +47,7 @@ if __name__ == "__main__":
     samples = glob.glob(opts.input_dir + '*.bin')
     print('Running over {} of {} samples found'.format(opts.n, len(samples)))
     if opts.n > 0:
-        samples = samples[:opts.n]
+        samples = samples[0:opts.n]
 
     for i, sample in enumerate(samples):
         make_job_file(i, sample, opts.output_dir)
