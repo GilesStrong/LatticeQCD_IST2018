@@ -6,7 +6,7 @@ import os.path
 import optparse
 import glob
 
-SOFTDIR = "/lstore/cms/giles/Simple_Delphes_Event_Selection/src/"
+SOFTDIR = "/lstore/cms/giles/LatticeQCD_IST2018/"
 
 
 def make_job_file(uid, input_file, output_dir):
