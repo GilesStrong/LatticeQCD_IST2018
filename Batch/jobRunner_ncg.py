@@ -22,7 +22,7 @@ def make_job_file(uid, input_file, output_dir):
     job_file.write(r"echo Beginning\ job\n")
     job_file.write("module load gcc-5.4\n")
     job_file.write("export PATH=/lstore/cms/giles/programs/bin:$PATH\n")
-    job_file.write("export LD_LIBRARY_PATH=/lstore/cms/giles/programs/lib64/n")
+    job_file.write("export LD_LIBRARY_PATH=/lstore/cms/giles/programs/lib64\n")
     job_file.write("cd " + SOFTDIR + "\n")
     job_file.write(r"echo Paths\ set\n")
     job_file.write(cmd + "\n")
@@ -41,7 +41,7 @@ if __name__ == "__main__":
     parser.add_option("-n", "--N", dest="n", action="store", default=-1,
                       help="Number of files to run")
     parser.add_option("-o", "--output_dir", dest="output_dir", action="store",
-                      default='Outputs/', help="Output directory")
+                      default='Output/', help="Output directory")
     opts, args = parser.parse_args()
 
     samples = glob.glob(opts.input_dir + '*.bin')
