@@ -1,7 +1,7 @@
 #include "lattice.hh"
 
 std::pair<bool, double> doubleCompare(double value, double target,
-                                      double tolerence = 1.5e-15) {
+                                      double tolerence = 1e-10) {
     /*Compare whether two doubles are approximately equal*/
     double relDif = std::abs((value-target)/std::min(value, target));
     return std::make_pair(relDif < tolerence, relDif);
