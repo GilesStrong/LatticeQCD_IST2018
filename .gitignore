@@ -1,5 +1,6 @@
 # Folders
 /Data/*
+/jobs/*
 
 # Prerequisites
 *.d
