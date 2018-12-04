@@ -92,7 +92,7 @@ int main(int argc, char *argv[]) {
     debug = options["-d"];
     verbose = options["-v"];
 
-     std::cout << "Loading config: " << options["-i"] << "\n";
+    std::cout << "Loading config: " << options["-i"] << "\n";
 	Lattice* config = new Lattice(param_Grid, options["-i"], verbose, debug);
     std::cout << "Config loaded\n";
     std::cout << "Running Wilson loop experiment and outputting results to: " << options["-o"] << "\n";

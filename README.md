@@ -20,10 +20,11 @@ Repo for lattice QCD project for IST QCD course, 2018
 - Matplotlib
 - Scipy
 
-## How to run:
+## How to run the experiment:
 1. Ensure depandancies installed and pats set
 1. Build with `make` in top directory
-1. Run using `./bin/main.exe`, `-d [deubug point]` can be used to exit once program reaches specified point (requires debug point in code), `-v [verbose point]` can be used to get verbose output of specifed function (must be set in code beforehand).
+1. Run using `./bin/main.exe -i <configuration name> -o <output file name>`, `-d [deubug point]` can be used to exit once program reaches specified point (requires debug point in code), `-v [verbose point]` can be used to get verbose output of specifed function (must be set in code beforehand).
+1. Batch computation can be used to run many experiments simulateously. See `./Batch/jobRunner_ncg.py` for an example.
 
 ### Debug points
 - load - exits after loading first SU(3) matrix from lattice config
@@ -42,3 +43,6 @@ Repo for lattice QCD project for IST QCD course, 2018
 - calcMeanWilsonLoopAtPoint
 - calcOverallMeanWilsonLoop
 - getWilsonLoopSample
+
+## How to run the analysis:
+1. `./Analysis/Config_Analysis_Final.ipynb` provides an example of analysising the experiment results in Python, and fitting to the static-quark potential
