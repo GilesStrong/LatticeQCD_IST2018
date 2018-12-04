@@ -52,8 +52,8 @@ void runWilsonExperiment(Lattice* config, std::string name) {
     outFile << "R,T,Mean,Std\n";
 
     std::pair<double, double> mean;
-    for (size_t R = 1; R <= 2;R++) {//config->getShape()[0]/2; R++) {
-        for (size_t T = 1; T <= 2;T++) {//config->getShape()[3]/4; T++) {
+    for (size_t R = 1; R <= 2; config->getShape()[0]/2; R++) {
+        for (size_t T = 1; T <= 2; config->getShape()[3]/4; T++) {
             if (verbose != "") std::cout << "(R, T) = " << R << ", " << T << ", mean = ";
             mean = config->calcOverallMeanWilsonLoop(R, T);
             outFile << R << "," << T << "," << mean.first << "," << mean.second << "\n";
