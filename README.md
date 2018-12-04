@@ -45,4 +45,4 @@ Repo for lattice QCD project for IST QCD course, 2018
 - getWilsonLoopSample
 
 ## How to run the analysis:
-1. `./Analysis/Config_Analysis_Final.ipynb` provides an example of analysising the experiment results in Python, and fitting to the static-quark potential
+1. `./Analysis/Config_Analysis_Final.ipynb` provides an example of analysing the experiment results in Python, and fitting to the static-quark potential
