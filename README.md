@@ -1,3 +1,5 @@
+[![DOI](https://zenodo.org/badge/131830982.svg)](https://zenodo.org/badge/latestdoi/131830982)
+
 # LatticeQCD IST2018
 Repo for lattice QCD project for IST QCD course, 2018
 
